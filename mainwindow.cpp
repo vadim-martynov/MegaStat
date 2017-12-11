@@ -17,9 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_text_report, SIGNAL(triggered()), this, SLOT(menu_save_click()));
     connect(ui->statusBar, SIGNAL(messageChanged(QString)), this, SLOT(status_change(QString)));
 
-    ui->twTypes->setColumnWidth(0, 50);
-    ui->twTypes->setColumnWidth(1, 50);
-    ui->twTypes->setColumnWidth(2, 150);
+    ui->twTypes->setColumnWidth(0, 80);
+    ui->twTypes->setColumnWidth(1, 80);
+    ui->twTypes->setColumnWidth(2, 180);
     starter = new QTimer;
     connect(starter, SIGNAL(timeout()), this, SLOT(starter_tick()));
     starter->start(100);
@@ -44,9 +44,11 @@ void MainWindow::RunSet()
     QApplication::processEvents();
     InitTypeClasses();
     InitIntClasses();
-    FindAbonents();
-    ShowInterfaces();
-    TypeCalc();
+    if(FindAbonents())
+    {
+        ShowInterfaces();
+        TypeCalc();
+    }
     ui->chAll->setEnabled(true);
 }
 
@@ -130,14 +132,20 @@ void MainWindow::InitTypeClasses()
 }
 
 
-void MainWindow::FindAbonents()
+bool MainWindow::FindAbonents()
 {
     QString screensSuf = "screens";
-    quint16 classInt;
+    quint16 classInt = C_NONE;
     QDir conf(confPath);
     QStringList lstDirs = conf.entryList(QDir::Dirs |
                                          QDir::AllDirs |
                                          QDir::NoDotAndDotDot);
+    if(!QFile::exists(confPath + "/tcms.conf"))
+    {
+        //qDebug() << "empty conf dir";
+        ui->statusBar->showMessage(confPath + "\t\t" + tr("Empty configuration directory"));
+        return false;
+    }
 
     //qDebug() << "dir size " << lstDirs.size();
     foreach(QString entry, lstDirs)
@@ -226,7 +234,7 @@ void MainWindow::FindAbonents()
                 case 456: //nabat fxs
                 case 499: //e1 terminal srv
                 case 501: //(open) qsig
-                case 502: //phone qsig
+                //case 502: //phone qsig
                 case 503: //radio man qsig
                 case 511: //ats qsig
                     classInt = C_PHOHE;
@@ -239,7 +247,7 @@ void MainWindow::FindAbonents()
 
                 default:
                 {
-                    if(tmp.type != 121)
+                    if(tmp.type != 121 && tmp.type != 502)
                     {
                         qDebug() << "!! other int" << tmp.type << tmp.id << tmp.name;
                         classInt = C_NONE;
@@ -256,7 +264,7 @@ void MainWindow::FindAbonents()
                     intTypes[tmp.type].count++;
 
                 //isdn special
-                if(tmp.type == 121)//ISDN
+                if(tmp.type == 121 || tmp.type == 502)//ISDN
                 {
                     classInt = C_PHOHE;
                     for(quint8 slot = 1; slot < 31; slot++)
@@ -289,6 +297,7 @@ void MainWindow::FindAbonents()
             intClass[classInt].idMap[tmp.id.toInt()] = tmp;
 
     }
+    return true;
 }
 
 void MainWindow::menu_open_click()
@@ -300,7 +309,7 @@ void MainWindow::menu_open_click()
                 this,
                 tr("Select a Directory"),
                 vcPath.path(),
-                QFileDialog::DontUseNativeDialog);
+                QFileDialog::DontUseNativeDialog | QFileDialog::ReadOnly);
     if( !dirname.isNull() )
     {
         confPath = dirname;
@@ -323,7 +332,8 @@ void MainWindow::menu_save_click()
                 tr("Save text report"),
                 repPath.path(),
                 //QDir::currentPath(),
-                tr("Text report (*.txt)"), 0, QFileDialog::DontUseNativeDialog );
+                tr("Text report (*.txt)"), 0,
+                QFileDialog::DontUseNativeDialog | QFileDialog::ReadOnly );
     repPath.setPath(fileName);
     if(!fileName.endsWith(sufix))
         fileName += sufix;

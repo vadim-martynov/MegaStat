@@ -24,7 +24,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_3">
         <property name="title">
-         <string>Hosts</string>
+         <string> Hosts count</string>
         </property>
         <layout class="QFormLayout" name="formLayout_3">
          <item row="0" column="0">
@@ -118,7 +118,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
-         <string>Iinterfaces</string>
+         <string>Iinterfaces ID count</string>
         </property>
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
@@ -306,7 +306,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>18</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuData">

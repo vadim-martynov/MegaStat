@@ -11,7 +11,16 @@
 #include "cidentry.h"
 #include "xmllibrary.h"
 
-#define TITLE_MAIN  "MegaStat"
+#define TITLE_MAIN  "MegaStat v.1.0.1"
+
+/* Change Log
+ * 1.0.1  07.12.2017
+ * release
+ *
+ *
+ *
+ *
+ */
 
 
 namespace Ui {
@@ -24,7 +33,7 @@ enum EIntClass
     C_RADIO,
     C_RECORD,
     C_TERMWS,
-    C_NONE = 10,
+    C_NONE = 10
 };
 
 enum EHostClass
@@ -33,7 +42,7 @@ enum EHostClass
     C_HOST_E,
     C_HOST_I,
     C_HOST_W,
-    C_HOST_M2,
+    C_HOST_M2
 };
 
 struct CIntClass
@@ -81,7 +90,7 @@ private:
     void ClearScreen();
     void InitTypeClasses();
     void InitIntClasses();
-    void FindAbonents();
+    bool FindAbonents();
     void TypeCalc();
     void ShowInterfaces();
     QString GetRevision();
